@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "baidu.appId",
+      "type": "java.lang.String",
+      "description": "百度appid."
+  }
+] }

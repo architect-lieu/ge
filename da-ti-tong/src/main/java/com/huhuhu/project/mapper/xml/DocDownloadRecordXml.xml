@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huhuhu.project.mapper.DocDownloadRecordMapper">
+
+    <select id="statisticNumByType" resultType="java.util.Map">
+        select
+            IFNULL(SUM(IF(`type` = '${@com.huhuhu.project.enums.DownloadSearchRecordEnum@DOWNLOAD.getDesc()}',1,0)), 0) as downloadCount,
+            IFNULL(SUM(IF(`type` = '${@com.huhuhu.project.enums.DownloadSearchRecordEnum@SEARCH.getDesc()}',1,0)), 0) as searchCount
+        from
+            dtt_doc_download_record
+        where
+            create_time between #{lastTime} and #{currentTime}
+        and
+            user_id = #{userId}
+    </select>
+</mapper>

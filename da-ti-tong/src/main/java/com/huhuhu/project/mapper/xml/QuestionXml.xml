@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huhuhu.project.mapper.QuestionMapper">
+    <resultMap id="question" type="com.huhuhu.project.entity.Question">
+        <result column="options" property="options" typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
+        <result column="right_options" property="rightOptions" typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
+    </resultMap>
+    <sql id="condition">
+        <where>
+            <if test="params.categoryId != null">
+                q.category_id = #{params.categoryId}
+            </if>
+            <if test="params.questionTitle != null and params.questionTitle != ''">
+                and q.question_title like concat('%',#{params.questionTitle},'%')
+            </if>
+            <if test="params.questionTypeName != null and params.questionTypeName != ''">
+                and q.question_type_name = #{params.questionTypeName}
+            </if>
+            <if test="params.questionTypeCode != null and params.questionTypeCode != ''">
+                and q.question_type_code = #{params.questionTypeCode}
+            </if>
+            <if test="params.difficulty != null and params.difficulty != ''">
+                and q.difficulty = #{params.difficulty}
+            </if>
+        </where>
+
+    </sql>
+    <select id="pageListByPaperId" resultMap="question">
+        select q.*
+        from
+        (select * from dtt_paper_question where paper_id = #{params.paperId}) tmp
+        left join
+        dtt_question as q on tmp.question_id = q.question_id
+        <include refid="condition"/>
+    </select>
+    <select id="searchByKeyWordList"  resultMap="question">
+        <choose>
+            <when test="keywords == null or keywords.size == 0">
+                select 1
+            </when>
+            <otherwise>
+                select *,
+                (<foreach collection="keywords" item="item" separator="+">IF(concat_ws(" ",question_title,`options`,analysis) like concat('%',#{item},'%'),1,0)</foreach>)
+                as weight
+                from dtt_question
+                where
+                concat_ws(" ",question_title,`options`,analysis) regexp
+                REPLACE("<foreach collection="keywords" item="item" separator="|">${item}</foreach>"," ","")
+                order by weight desc
+            </otherwise>
+        </choose>
+    </select>
+    <select id="typeStatistic" resultType="java.util.Map">
+        select
+            <foreach collection="types" item="type" separator=",">
+                IFNULL(SUM(IF(question_type_name = #{type},1,0)), 0) as #{type}
+            </foreach>
+        from dtt_question
+        where category_id = #{categoryId}
+    </select>
+    <select id="difficultyStatistic" resultType="java.util.Map">
+        select
+            <foreach collection="difficulty" item="diff" separator=",">
+                IFNULL(SUM(IF(difficulty = #{diff},1,0)), 0) as #{diff}
+            </foreach>
+        from dtt_question
+        where category_id = #{categoryId}
+    </select>
+    <select id="statisticQuestionNum" resultType="java.util.Map">
+        select category_id as categoryId,count(1) as num
+        from dtt_question
+        <if test="cIds != null and cIds.size != 0">
+            <where>
+                category_id in
+                <foreach collection="cIds" item="cid" separator="," open="(" close=")">
+                    #{cid}
+                </foreach>
+            </where>
+        </if>
+        group by category_id
+    </select>
+    <select id="selectQuestionCountBySubjectIds" resultType="java.util.Map">
+        select
+            <foreach collection="subjectIds" item="subjectId" separator=",">
+                IFNULL(SUM(IF(subject_id = #{subjectId},1,0)),0) as id_#{subjectId}
+            </foreach>
+        from dtt_question
+        where subject_id in
+        (
+        <foreach collection="subjectIds" item="subjectId" separator=",">
+            #{subjectId}
+        </foreach>
+        )
+    </select>
+</mapper>

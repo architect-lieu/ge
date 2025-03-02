@@ -1,0 +1,46 @@
+kind: pipeline
+type: docker
+name: 前端测试
+volumes:
+  - name: build-script
+    host:
+     path: /service/script/dt-ui
+
+steps:
+  - name: 编译构建
+    image: node:latest
+    pull: if-not-exists
+    volumes:
+      - name: build-script
+        path: /app/build
+    commands:
+      - npm install -g cnpm --registry=https://registry.npm.taobao.org
+      - cnpm install
+      - cnpm run build:dev
+      - mkdir -p /app/build/html
+      - rm -rf /app/build/html/v3-admin-vite
+      - mv ./v3-admin-vite /app/build/html/v3-admin-vite
+      - cp run.sh /app/build/run.sh
+
+  - name: 部署
+    image: appleboy/drone-ssh
+    pull: if-not-exists
+    settings:
+     host: 172.17.0.1
+     username: root
+     password: root2020*
+     port: 22
+     command_timeout: 5m
+     script:
+      - cd /service/script/dt-ui
+      - chmod 777 run.sh
+      - ./run.sh
+
+
+  - name: 构建通知
+    image: plugins/webhook
+    settings:
+      urls: https://open.feishu.cn/open-apis/bot/v2/hook/0b7e05e2-9d2d-4710-9c48-d74b04ad5fed
+      content_type: application/json
+      debug: true
+      template: {"msg_type":"interactive","card":{"config":{"wide_screen_mode":true},"header":{"template":"blue","title":{"tag":"plain_text","i18n":{"zh_cn":"【前端测试-部署通知】"}}},"i18n_elements":{"zh_cn":[{"fields":[{"is_short":true,"text":{"content":"**状态**","tag":"lark_md"}},{"is_short":true,"text":{"content":"**{{#success build.status}}✅{{else}}❌{{/success}}{{ build.status }}**-*{{repo.owner}}/{{repo.name}}*-**{{build.number}}**","tag":"lark_md"}}],"tag":"div"},{"tag":"column_set","flex_mode":"none","background_style":"grey","columns":[{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"div","text":{"content":"**说明**","tag":"lark_md"}}]},{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"div","text":{"content":"**详情**","tag":"lark_md"}}]}]},{"tag":"column_set","flex_mode":"none","background_style":"grey","columns":[{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"markdown","content":"*构建结果*"}]},{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"markdown","content":"{{ build.status }}"}]}]},{"tag":"column_set","flex_mode":"none","background_style":"grey","columns":[{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"markdown","content":"*构建详情*\n"}]},{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"markdown","content":"[点击查看]({{build.link}})"}]}]},{"tag":"column_set","flex_mode":"none","background_style":"grey","columns":[{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"markdown","content":"*代码分支*"}]},{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"markdown","content":"{{ build.branch }}"}]}]},{"tag":"column_set","flex_mode":"none","background_style":"grey","columns":[{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"markdown","content":"*提交标识*"}]},{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"markdown","content":"{{ build.commit }}"}]}]},{"tag":"column_set","flex_mode":"none","background_style":"grey","columns":[{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"markdown","content":"*提交发起*"}]},{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"markdown","content":"{{ build.author}}"}]}]},{"tag":"column_set","flex_mode":"none","background_style":"grey","columns":[{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"markdown","content":"*提交信息*"}]},{"tag":"column","width":"weighted","weight":1,"vertical_align":"top","elements":[{"tag":"markdown","content":"**{{#success build.status}}✅{{else}}❌{{/success}}{{ build.status }}**-*{{repo.owner}}/{{repo.name}}*"}]}]},{"tag":"hr"},{"elements":[{"content":"[来自drone]}","tag":"lark_md"}],"tag":"note"}]}}}

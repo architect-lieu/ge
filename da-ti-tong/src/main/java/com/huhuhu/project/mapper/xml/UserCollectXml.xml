@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huhuhu.project.mapper.UserCollectMapper">
+
+    <resultMap id="question" type="com.huhuhu.project.entity.Question">
+        <result column="options" property="options" typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
+        <result column="right_options" property="rightOptions" typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
+    </resultMap>
+
+    <select id="statisticCategory" resultType="java.util.Map">
+        select tmp.*, dtt_category.category_name as categoryName
+        from (select category_id as categoryId,
+                     count(1)    as num
+              from dtt_user_collect
+              where user_id = #{currentLoginUserId}
+              group by category_id
+             ) tmp
+                 left join dtt_category on (tmp.categoryId = dtt_category.category_id)
+    </select>
+    <select id="questionList" resultMap="question">
+        select q.*
+        from (
+                 select question_id
+                 from dtt_user_collect
+                 where user_id = #{userId} and category_id = #{params.categoryId} and collect_type = 2
+             ) tmp
+                 left join dtt_question q on (tmp.question_id = q.question_id)
+    </select>
+
+    <select id="categoryStatistic" resultType="java.util.Map">
+        SELECT
+        IFNULL(SUM( IF ( DATE(NOW()) = DATE(create_time), 1, 0 )), 0 ) AS todayCollectNum,
+        COUNT(1) as allCollectNum,
+        <foreach collection="names" item="item" separator=",">
+            IFNULL(SUM(IF(question_type_name = #{item}, 1, 0)),0) as #{item}
+        </foreach>
+        FROM dtt_user_collect
+        WHERE category_id = #{categoryId} and user_id = #{userId}
+    </select>
+</mapper>

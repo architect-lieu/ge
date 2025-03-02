@@ -1,0 +1,117 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  mvc:
+    servlet:
+      load-on-startup: 1
+  datasource:
+    url: jdbc:mysql://localhost:3306/shua-ti-tong?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: datitong2023*
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    filters: stat,wall,log4j
+    maxPoolPreparedStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+server:
+  tomcat:
+    uri-encoding: UTF-8
+  port: 8080
+  servlet:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+    context-path: /da-ti-tong
+# 小程序配置
+wx_appid: wxa2a277b6d04d1992
+wx_secret: 725d8bc609fd50f04b49b870d3b282ad
+wx_acc_login_url: https://api.weixin.qq.com/sns/oauth2/access_token?appid=${wx_appid}&secret=${wx_secret}&code=%s&grant_type=authorization_code
+wx_acc_token_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${wx_appid}&secret=${wx_secret}
+wx_user_info_url: https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN
+wx_user_phone_url: https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=%s
+wx_min_app_login_url: https://api.weixin.qq.com/sns/jscode2session?appid=${wx_appid}&secret=${wx_secret}&js_code=%s&grant_type=authorization_code
+
+# mybatis-plus
+mybatis-plus:
+  configuration:
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    banner: false
+  mapper-locations: classpath:com/huhuhu/project/mapper/xml/*.xml
+
+aliyun:
+  oss:
+    endpoint: xxxxx
+    accessKeyId: xxxx
+    accessKeySecret: xxxx
+    bucketName: datitong
+    filedir: prod/doc/
+  sms:
+    accessKey: LTAI5tMQY4hvNgfhFUgRwNfv
+    accessSecret: HVGYUP1er22zKP1wnlFc7HLEjyyBRl
+    tmpCode: SMS_273755120
+    signName: 康鑫的博客
+
+baidu:
+  appId: 31370985
+  appKey: yYgEmIBBoroBLnVbZmBCRMRX
+  secretKey: gap6UZ8YT6pVhV0ofotKwDkw8Wjhll6M
+# 微信支付
+#wechat:
+#  pay:
+#    v3:
+#      miniapp:
+#        app-id: xxx
+#        app-secret: xxx
+#        app-v3-secret: xxx
+#        mch-id: xxx
+#        domain: xxx
+#        cert-path: xxx
+order:
+  pay:
+    callback: /wx/callback/pay/callback
+  refund:
+    callback: /wx/callback/refund/callback
+
+# springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    version: 3.0.1
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: '客户端接口文档API'
+      paths-to-match: '/customer/**'
+      packages-to-scan: com.huhuhu.project.controller.customer
+    - group: '管理端接口文档API'
+      paths-to-match: '/admin/**'
+      packages-to-scan: com.huhuhu.project.controller.admin
+
+# knife4j的增强配置，不需要增强可以不配
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
