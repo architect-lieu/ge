@@ -14,8 +14,8 @@ import com.baomidou.mybatisplus.generator.fill.Column;
 public class MyBatisPlusGenerator {
 
     public static void main(String[] args) {
-        FastAutoGenerator.create("jdbc:mysql://localhost:3306/shua_ti_tong?useUnicode=true&characterEncoding=utf-8&useSSL=false"
-                        , "root", "12345678")
+        FastAutoGenerator.create("jdbc:mysql://39.98.88.24:3306/shua-ti-tong?useUnicode=true&characterEncoding=utf-8&useSSL=false"
+                        , "root", "kx19980229")
                 //2、全局配置
                 .globalConfig(builder -> {
                     builder.author("KangXin") // 设置作者名

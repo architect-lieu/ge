@@ -41,6 +41,7 @@ server:
       charset: UTF-8
       enabled: true
     context-path: /da-ti-tong
+
 # 小程序配置
 wx_appid: wxa2a277b6d04d1992
 wx_secret: 725d8bc609fd50f04b49b870d3b282ad
@@ -76,6 +77,7 @@ baidu:
   appId: 31370985
   appKey: yYgEmIBBoroBLnVbZmBCRMRX
   secretKey: gap6UZ8YT6pVhV0ofotKwDkw8Wjhll6M
+
 # 微信支付
 #wechat:
 #  pay:
