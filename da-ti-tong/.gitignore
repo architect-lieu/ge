@@ -1,38 +1,26 @@
+# 构建输出
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
-*.iml
-*.ipr
-
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+out/
 
-### VS Code ###
+# 日志与临时文件
+*.log
+*.tmp
+hs_err_pid*
+
+# IDE 配置
+.idea/
+.project
+.classpath
+.settings/
 .vscode/
 
-### Mac OS ###
+# 操作系统生成文件
 .DS_Store
+Thumbs.db
+
+# 依赖缓存
+.mvn/wrapper/maven-wrapper.jar
+.gradle/
+
+

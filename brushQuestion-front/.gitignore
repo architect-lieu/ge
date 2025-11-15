@@ -1,5 +1,31 @@
+# Node / Front-end 构建产物
 node_modules/
-.project
 dist/
-unpackage
+dist-ssr/
+build/
+
+# 日志 & 临时文件
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 环境变量文件
+.env
+.env.*
+
+# 编辑器配置
 .DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/*.code-snippets
+
+# 缓存
+.eslintcache
+.stylelintcache
+
+

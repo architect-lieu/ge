@@ -48,6 +48,7 @@ public class Customer {
     private String mobilephone;
 
     @Schema(description = "sessionKey", hidden = true)
+    @TableField("session_key")
     private String sessionKey;
 
     @Schema(description = "密码",hidden = true)

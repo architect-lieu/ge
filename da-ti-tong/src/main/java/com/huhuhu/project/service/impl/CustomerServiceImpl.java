@@ -217,6 +217,15 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
         Integer vipFlag = (Integer) claims.get("vipFlag");
         UserEnum userEnum = UserEnum.getByCode(vipFlag);
         VipConfig vipConfig = JvmCache.getVipConfig(userEnum.getDesc());
+        
+        // 如果VIP配置不存在，返回默认值
+        if (vipConfig == null) {
+            Map<String, Long> result = new HashMap<>();
+            result.put("downloadCount", 0L);
+            result.put("searchCount", 0L);
+            return result;
+        }
+        
         // 查询用户的搜题次数
         // 查询用户的下载次数
         // 计算月时间

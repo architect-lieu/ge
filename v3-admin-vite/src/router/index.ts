@@ -65,6 +65,22 @@ export const constantRoutes: RouteRecordRaw[] = [
     ]
   },
   {
+    path: "/questionTypeManage",
+    component: Layout,
+    redirect: "/questionTypeManage",
+    children: [
+      {
+        path: "/questionTypeManage",
+        component: () => import("@/views/table/question-type/index.vue"),
+        name: "QuestionType",
+        meta: {
+          title: "题型管理",
+          keepAlive: true
+        }
+      }
+    ]
+  },
+  {
     path: "/userList",
     component: Layout,
     redirect: "/userList",
